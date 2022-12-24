@@ -4,18 +4,18 @@ TEST create/list M2M
 
 ## instalation
 
+```bash
+git clone https://github.com/DenisDolmatov2020/entityProperies.git
 
-### 1 git clone https://github.com/DenisDolmatov2020/entityProperies.git
+cd entityProperties
 
-### 2 cd entityProperties
+pip install -r requirements.txt
 
-### 3 pip install -r requirements.txt
+python manage.py migrate
 
-### 4 python manage.py migrate
-
-### 5 python manage.py runserver
-
+python manage.py runserver
+```
 
 ## URLS
 
-### 1) localhost:8000/api/item/create
+### localhost:8000/api/item/create
