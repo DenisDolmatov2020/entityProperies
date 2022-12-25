@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 
 from item.models import Entity
@@ -9,7 +9,7 @@ from item.serializers import EntitySerializer
 # Create your views here.
 
 
-class CreateEntityView(CreateAPIView):
+class CreateListEntityView(ListCreateAPIView):
     queryset = Entity.objects.all()
     serializer_class = EntitySerializer
 

@@ -1,7 +1,7 @@
 from django.urls import path
 
-from item.views import CreateEntityView
+from item.views import CreateListEntityView
 
 urlpatterns = [
-    path('create/', CreateEntityView.as_view(), name='create-entity'),
+    path('', CreateListEntityView.as_view(), name='create-entity'),
 ]

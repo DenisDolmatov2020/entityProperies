@@ -1,3 +1,6 @@
+from abc import ABC
+
+from django.db.models import Manager
 from rest_framework import serializers
 from rest_framework.fields import IntegerField
 from rest_framework.serializers import ModelSerializer
@@ -5,17 +8,21 @@ from rest_framework.serializers import ModelSerializer
 from item.models import Entity, Property
 
 
+class PropertyListSerializer(serializers.ListSerializer, ABC):
+
+    def to_representation(self, data):
+        props = data.all() if isinstance(data, Manager) else data
+
+        return {
+            prop.key: prop.value for prop in props
+        }
+
+
 class PropertySerializer(serializers.ModelSerializer):
     class Meta:
+        list_serializer_class = PropertyListSerializer
         model = Property
         fields = ('key', 'value')
-
-
-'''
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        return {response['key']: response['value']}
-'''
 
 
 class EntitySerializer(ModelSerializer):
@@ -25,16 +32,6 @@ class EntitySerializer(ModelSerializer):
     class Meta:
         model = Entity
         fields = '__all__'
-
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        properties = {}
-        for p in response['properties']:
-            properties[p['key']] = p['value']
-
-        response['properties'] = properties
-
-        return response
 
     def create(self, validated_data):
         value = validated_data.pop('value')
