@@ -10,9 +10,12 @@ class PropertySerializer(serializers.ModelSerializer):
         model = Property
         fields = ('key', 'value')
 
+
+'''
     def to_representation(self, instance):
         response = super().to_representation(instance)
         return {response['key']: response['value']}
+'''
 
 
 class EntitySerializer(ModelSerializer):
@@ -22,6 +25,18 @@ class EntitySerializer(ModelSerializer):
     class Meta:
         model = Entity
         fields = '__all__'
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        print('resp', response['properties'])
+        properties = {}
+        for p in response['properties']:
+            print('P', p)
+            properties[p['key']] = p['value']
+
+        response['properties'] = properties
+
+        return response
 
     def create(self, validated_data):
         value = validated_data.pop('value')
