@@ -28,10 +28,8 @@ class EntitySerializer(ModelSerializer):
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
-        print('resp', response['properties'])
         properties = {}
         for p in response['properties']:
-            print('P', p)
             properties[p['key']] = p['value']
 
         response['properties'] = properties
