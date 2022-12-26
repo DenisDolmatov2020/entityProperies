@@ -18,4 +18,4 @@ python manage.py runserver
 
 ## URLS
 
-### localhost:8000/api/item/create
+### localhost:8000/api/item/
