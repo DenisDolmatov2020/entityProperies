@@ -29,7 +29,7 @@ class EntitySerializer(ModelSerializer):
 
     class Meta:
         model = Entity
-        fields = '__all__'
+        fields = ('value', 'modified_by', 'properties')
 
     def create(self, validated_data):
         value = validated_data.pop('value', '')
