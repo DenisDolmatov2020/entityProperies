@@ -1,14 +1,11 @@
-from abc import ABC
-
 from django.db.models import Manager
-from rest_framework import serializers
-from rest_framework.fields import IntegerField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.fields import IntegerField, HiddenField, CurrentUserDefault
+from rest_framework.serializers import ModelSerializer, ListSerializer
 
 from item.models import Entity, Property
 
 
-class PropertyListSerializer(serializers.ListSerializer, ABC):
+class PropertyListSerializer(ListSerializer):
 
     def to_representation(self, data):
         props = data.all() if isinstance(data, Manager) else data
@@ -18,7 +15,7 @@ class PropertyListSerializer(serializers.ListSerializer, ABC):
         }
 
 
-class PropertySerializer(serializers.ModelSerializer):
+class PropertySerializer(ModelSerializer):
     class Meta:
         list_serializer_class = PropertyListSerializer
         model = Property
@@ -27,6 +24,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
 class EntitySerializer(ModelSerializer):
     value = IntegerField(required=False)
+    modified_by = HiddenField(default=CurrentUserDefault())
     properties = PropertySerializer(many=True)
 
     class Meta:
@@ -34,14 +32,12 @@ class EntitySerializer(ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        value = validated_data.pop('value')
-        modified_by = validated_data.pop('modified_by')
-        data = validated_data.pop('data', {})
-        if data:
-            value = data['value']
-        entity = Entity.objects.create(value=value, modified_by=modified_by)
-
+        value = validated_data.pop('value', '')
+        if not value:
+            value = self.initial_data.get("data[value]")
         props = validated_data.pop('properties', [])
+        entity = Entity.objects.create(**validated_data, value=value)
+
         if props:
             props_created = Property.objects.bulk_create(
                 Property(**prop)
